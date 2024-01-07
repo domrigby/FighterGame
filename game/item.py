@@ -14,18 +14,21 @@ class Item:
         self.time_step = time_step
         self.drag = drag
 
-        self.force = np.array([0,0])
+        self.thrust = np.array([0,0])
+        self.brake = np.array([0,0])
 
         self.draw_shape = draw_shape
         self.colour = colour
 
+        self.dead = False
 
-    def update_state(self,deltaT=None):
+
+    def update_state(self, deltaT=None):
         
         if deltaT is None:
             deltaT = self.time_step
 
-        acc = np.multiply(self.vel,-self.drag*la.norm(self.vel)) + np.divide(self.force, self.mass)
+        acc = np.multiply(self.vel,-self.drag*la.norm(self.vel)) + np.divide(self.thrust+self.brake, self.mass)
 
         self.pos = self.pos + np.multiply(self.vel,deltaT)+np.multiply(acc,deltaT**(2)/2)
         self.vel = self.vel + np.multiply(acc,deltaT)
@@ -46,6 +49,11 @@ class Item:
         new_shape_points = np.dot(self.draw_shape, rot_mat)
 
         return new_shape_points
+    
+    @property
+    def state(self):
+        state = np.append(self.pos, self.vel)
+        return state
     
     @property
     def forward_angle_world(self):
