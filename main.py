@@ -1,8 +1,13 @@
 
 
 from game.fighter_game import FighterGame
+from RL.agent import RLAgent
 
+env = FighterGame('inputs/fighter.csv', render=True) #, real_time=True)
 
-run = FighterGame('inputs/fighter.csv', render=True)
+agent = RLAgent(env) #, learning=False, load_actor_file=True, num_runs=10000)
 
-run.run()
+for i in range(10000):
+    print(i)
+    agent.explore_one_episode()
+    print(agent.scores[-1])
