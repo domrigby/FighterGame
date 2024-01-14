@@ -103,7 +103,7 @@ class FighterGame:
             self.check_in_area(obj)
             if obj.dead:
                 done = True
-            if abs(obj.vel_vs_orientation_ang) > np.pi/4:
+            if abs(obj.vel_vs_orientation_ang) > 3*np.pi/4:
                 done = True
 
         truncated = False

@@ -15,6 +15,7 @@ class Fighter(Item):
         self.hit_box = 100
         self.radar_bins = 72
         self.ent_type = 'fighter'
+        self.magazine_size = 0
         super().__init__(mass, init_pos, init_vel, draw_shape=draw_shape, colour=colour)
 
     def apply_thrust(self, vector):
@@ -25,10 +26,10 @@ class Fighter(Item):
         This is in the fighters frame of reference with 0 pi directly backwards and anti clockwise
         """
 
-        angle = np.clip(angle, -np.pi/4, np.pi/4)
+        angle = np.clip(angle, -np.pi/6, np.pi/6)
 
         # must convert to world frame of reference
-        thrust_angle_world = self.forward_vel_angle_world + angle # thrust is in forward direction
+        thrust_angle_world = self.orientation + angle # thrust is in forward direction
         self.thrust= self.scalar_and_angle_to_vec(force, thrust_angle_world)
 
     def apply_break(self, amount):
@@ -44,6 +45,9 @@ class Fighter(Item):
     
     def shoot(self):
         # deep copy so thet dont have the same memory address
+        if self.magazine_size <= 0:
+            return
+        self.magazine_size -= 1
         vel_norm = self.vel/la.norm(self.vel)
         return Bullet(init_pos=deepcopy(self.pos)+vel_norm*(self.hit_box*2), init_vel=250*vel_norm, colour=(0,0,0))
     
@@ -71,12 +75,14 @@ class Fighter(Item):
         return sensor_return
     
     def stabiliser(self):
-        
-        return super().stabiliser()
+        stab_torque=0.1*self.vel_vs_orientation_ang
+        return stab_torque
+
     
     def state(self, other_fighters):
         sensor_return = self.sensors(other_fighters)
-        state = np.concatenate((self.pos, self.vel, [self.orientation], [self.ang_vel] ) )#, sensor_return))
+        state = np.concatenate((self.pos, [la.norm(self.vel)], [self.ang_vel], [self.vel_vs_orientation_ang]))
+        #state = np.concatenate((self.pos, self.vel, [self.orientation], [self.ang_vel] ) )#, sensor_return))
         return state
     
     @staticmethod

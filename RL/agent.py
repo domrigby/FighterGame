@@ -13,7 +13,7 @@ class RLAgent:
     def __init__(self, env, learning=True, temperature=2, load_actor_file=None, num_rums=1000) -> None:
         self.env = env
 
-        state_dim = 6
+        state_dim = 5
 
         # temperature is how much entropy of policy matters
         self.temperature = temperature

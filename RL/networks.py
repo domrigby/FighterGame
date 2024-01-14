@@ -13,6 +13,7 @@ def init_weights(m):
         nn.init.normal_(m.bias, mean=0.0, std=0.01)
 
 class GenericNetwork:
+    
     def __init__(self, name="", save_path=None) -> None:
 
         self.name = name
@@ -58,8 +59,8 @@ class ActorNetwork(nn.Module, GenericNetwork):
 
         self.noise = 1e-6
         
-        self.action_min= torch.tensor([-PI/6, 0, -500, 0])
-        self.action_max = torch.tensor([PI/6, 3089, 500, 10])
+        self.action_min= torch.tensor([-PI/6, 500, -500, 0])
+        self.action_max = torch.tensor([PI/6, 3089, 500, 3])
 
         self.act = nn.ReLU()
 

@@ -27,7 +27,7 @@ class Item:
         self.thrust = np.array([0,0])
         self.brake = np.array([0,0])
 
-        self.thruster_pos = np.array([0, 0])
+        self.thruster_pos = np.array([-1, 0])
 
         self.adjuster_torque = 0.0
         self.adjuster_pos =np.array([0, 0])
@@ -46,7 +46,7 @@ class Item:
         # current starts in top and is fired towards middle
         self.pos = np.random.uniform(0, arena_size[0], size=2)
         vec_to_middle = (np.array(arena_size)/2) - self.pos
-        self.vec = np.random.uniform(20,40)*vec_to_middle/la.norm(vec_to_middle)
+        self.vel = 3*np.random.uniform(20,40)*vec_to_middle/la.norm(vec_to_middle)
 
         #self.vel= np.random.uniform(20, 30, size=2)
 
