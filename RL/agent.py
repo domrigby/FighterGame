@@ -95,6 +95,7 @@ class RLAgent:
             state = new_state
 
         self.scores.append(score)
+        
         if self.plot_scores:
             self.line.set_ydata(self.scores)
             self.line.set_xdata(range(len(self.scores)))

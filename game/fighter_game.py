@@ -103,7 +103,8 @@ class FighterGame:
             self.check_in_area(obj)
             if obj.dead:
                 done = True
-            if abs(obj.vel_vs_orientation_ang) > 3*np.pi/4:
+
+            if abs(obj.vel_vs_orientation_ang) > np.pi/2:
                 done = True
 
         truncated = False
@@ -130,8 +131,8 @@ class FighterGame:
                 self.active_weapons.append(obj.shoot())
 
             # reinstate when multiple agents
-            #if obj.dead:
-            #    self.active_fighters.remove(obj)
+            if obj.dead:
+                self.active_fighters.remove(obj)
         
         for bul in self.active_weapons:
             bul.update_state(time_step)

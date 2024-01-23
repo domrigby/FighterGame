@@ -59,8 +59,8 @@ class ActorNetwork(nn.Module, GenericNetwork):
 
         self.noise = 1e-6
         
-        self.action_min= torch.tensor([-PI/6, 500, -500, 0])
-        self.action_max = torch.tensor([PI/6, 3089, 500, 3])
+        self.action_min= torch.tensor([-PI/100, 10000, -PI/4, 0])
+        self.action_max = torch.tensor([PI/100, 66973, PI/4, 3])
 
         self.act = nn.ReLU()
 

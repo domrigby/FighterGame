@@ -10,12 +10,15 @@ import pygame
 
 class Fighter(Item):
 
-    def __init__(self, team, mass=1, init_pos=..., init_vel=[10,10],draw_shape=None, colour=(255,0,0)):
+    def __init__(self, team, mass=0.1, init_pos=..., init_vel=[10,10],draw_shape=None, colour=(255,0,0)):
         self.team = team
         self.hit_box = 100
         self.radar_bins = 72
         self.ent_type = 'fighter'
         self.magazine_size = 0
+
+        self.rudder_area = 1000
+
         super().__init__(mass, init_pos, init_vel, draw_shape=draw_shape, colour=colour)
 
     def apply_thrust(self, vector):
@@ -33,16 +36,24 @@ class Fighter(Item):
         self.thrust= self.scalar_and_angle_to_vec(force, thrust_angle_world)
 
     def apply_break(self, amount):
-        scale_for_misalign = np.cos(self.forward_vel_angle_world - self.orientation)**(2)
+        scale_for_misalign = abs(np.cos(self.forward_vel_angle_world - self.orientation))
         self.brake = - 0.5* amount * (self.vel/la.norm(self.vel))* scale_for_misalign
         if self.brake.dot(self.vel) > 0:
             raise ValueError("Brake cannot be in direction of velocity")
     
     def activate_adjuster(self, amount):
-        # amount is in range [-1,1]
-        self.adjuster_torque = amount
+        # amount is in range [-pi/2, pi/2]
+        # this is the angle of the rudder
 
-    
+        # This gives us the relative angle of the rudder the velocity 
+        rudder_angle_to_vel = np.pi - (self.orientation - self.forward_vel_angle_world) - amount
+
+        length_in_vel_dir = abs(self.rudder_area * np.sin(rudder_angle_to_vel))
+
+        force_on_rudder = self.drag_const_at_speed() * la.norm(self.vel) * length_in_vel_dir
+
+        self.adjuster_torque = force_on_rudder * np.sin(amount)
+
     def shoot(self):
         # deep copy so thet dont have the same memory address
         if self.magazine_size <= 0:
@@ -75,7 +86,7 @@ class Fighter(Item):
         return sensor_return
     
     def stabiliser(self):
-        stab_torque=0.1*self.vel_vs_orientation_ang
+        stab_torque=-0.1*self.vel_vs_orientation_ang
         return stab_torque
 
     
